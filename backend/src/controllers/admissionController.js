@@ -1,28 +1,26 @@
 const prisma = require("../config/prisma");
 
-const applyTeacher = async (req, res) => {
+const applyAdmission = async (req, res) => {
   try {
 
-    const teacher = await prisma.teacherApplication.create({
+    const admission = await prisma.studentAdmission.create({
       data: {
         fullName: req.body.fullName,
         email: req.body.email,
         phone: req.body.phone,
-        subject: req.body.subject,
-        qualification: req.body.qualification,
-        experience: req.body.experience,
+        className: req.body.className,
 
-        resumeUrl:
-          req.files?.resume?.[0]?.path || null,
+        photoUrl:
+          req.files?.photo?.[0]?.path || null,
 
-        certificateUrl:
-          req.files?.certificate?.[0]?.path || null
+        documentUrl:
+          req.files?.document?.[0]?.path || null
       }
     });
 
     res.status(201).json({
       success: true,
-      data: teacher
+      data: admission
     });
 
   } catch (error) {
@@ -37,11 +35,11 @@ const applyTeacher = async (req, res) => {
   }
 };
 
-const getAllApplications = async (req, res) => {
+const getAllAdmissions = async (req, res) => {
   try {
 
-    const applications =
-      await prisma.teacherApplication.findMany({
+    const admissions =
+      await prisma.studentAdmission.findMany({
         orderBy: {
           createdAt: "desc"
         }
@@ -49,12 +47,10 @@ const getAllApplications = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: applications
+      data: admissions
     });
 
   } catch (error) {
-
-    console.log(error);
 
     res.status(500).json({
       success: false,
@@ -64,13 +60,13 @@ const getAllApplications = async (req, res) => {
   }
 };
 
-const updateApplicationStatus = async (req, res) => {
+const updateAdmissionStatus = async (req, res) => {
   try {
 
     const { status } = req.body;
 
-    const application =
-      await prisma.teacherApplication.update({
+    const admission =
+      await prisma.studentAdmission.update({
         where: {
           id: Number(req.params.id)
         },
@@ -81,7 +77,7 @@ const updateApplicationStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: application
+      data: admission
     });
 
   } catch (error) {
@@ -97,7 +93,7 @@ const updateApplicationStatus = async (req, res) => {
 };
 
 module.exports = {
-  applyTeacher,
-   getAllApplications,
-   updateApplicationStatus
+  applyAdmission,
+  getAllAdmissions,
+   updateAdmissionStatus
 };

@@ -4,6 +4,10 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const noticeRoutes = require("./routes/noticeRoutes");
+const teacherRoutes = require("./routes/teacherRoutes");
+const admissionRoutes = require("./routes/admissionRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 
 const app = express();
 
@@ -15,6 +19,10 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/notices", noticeRoutes);
+app.use("/api/teachers", teacherRoutes);
+app.use("/api/admissions", admissionRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/admin/stats", statsRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

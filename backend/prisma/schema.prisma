@@ -15,6 +15,15 @@ enum Role {
   STUDENT
 }
 
+/*
+  Added for future Student Admission Module
+*/
+enum AdmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   fullName  String
@@ -58,4 +67,20 @@ model TeacherApplication {
   status String @default("PENDING")
 
   createdAt DateTime @default(now())
+}
+
+
+model StudentAdmission {
+  id          Int             @id @default(autoincrement())
+  fullName    String
+  email       String
+  phone       String
+  className   String
+
+  photoUrl    String?
+  documentUrl String?
+
+  status      AdmissionStatus @default(PENDING)
+
+  createdAt   DateTime @default(now())
 }
