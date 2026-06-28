@@ -1,0 +1,21 @@
+.card {
+  border-radius: 12px;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+
+.btn {
+  min-width: 85px;
+}
+
+input.form-control {
+  max-width: 350px;
+}

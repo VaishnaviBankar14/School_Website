@@ -1,0 +1,20 @@
+.card {
+  border-radius: 12px;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.btn {
+  min-width: 80px;
+}
+
+.form-control {
+  max-width: 350px;
+}
+
+td {
+  word-break: break-word;
+}

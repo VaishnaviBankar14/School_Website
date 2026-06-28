@@ -1,0 +1,66 @@
+.story-section {
+  background: #ffffff;
+}
+
+.story-image {
+  transition: transform 0.4s ease;
+}
+
+.story-image:hover {
+  transform: scale(1.03);
+}
+
+.section-tag {
+  display: inline-block;
+  background: #0d6efd;
+  color: #fff;
+  padding: 6px 18px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.section-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #1d3557;
+  margin-bottom: 20px;
+}
+
+.story-section p {
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.story-card {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: 0.3s;
+  height: 100%;
+}
+
+.story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.story-card h3 {
+  color: #0d6efd;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.story-card p {
+  margin: 0;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+}

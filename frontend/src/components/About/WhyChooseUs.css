@@ -1,0 +1,55 @@
+.why-section{
+    background:#f8f9fa;
+}
+
+.section-subtitle{
+    max-width:700px;
+    margin:auto;
+    color:#666;
+    line-height:1.8;
+}
+
+.feature-card{
+    background:#fff;
+    padding:35px 25px;
+    border-radius:20px;
+    text-align:center;
+    transition:.35s;
+    border:1px solid #e9ecef;
+}
+
+.feature-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 18px 40px rgba(0,0,0,.08);
+}
+
+.feature-icon{
+    width:75px;
+    height:75px;
+
+    margin:auto auto 20px;
+
+    border-radius:50%;
+
+    background:#0d6efd;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+
+    font-size:30px;
+}
+
+.feature-card h4{
+    font-weight:700;
+    margin-bottom:15px;
+    color:#1d3557;
+}
+
+.feature-card p{
+    color:#666;
+    line-height:1.7;
+    margin:0;
+}

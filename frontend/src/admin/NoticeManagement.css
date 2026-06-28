@@ -1,0 +1,15 @@
+.card{
+    border-radius:12px;
+}
+
+.form-control{
+    margin-bottom:15px;
+}
+
+table td{
+    vertical-align:middle;
+}
+
+button{
+    min-width:100px;
+}

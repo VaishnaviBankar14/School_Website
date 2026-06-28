@@ -1,0 +1,13 @@
+.principal-section{
+    background:#f8f9fa;
+    padding:90px 0;
+}
+
+.principal-image{
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    object-fit:cover;
+    border:8px solid white;
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+}

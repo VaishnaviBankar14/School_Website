@@ -1,0 +1,39 @@
+.principal-section{
+    background:#fff;
+}
+
+.principal-image{
+    width:100%;
+    max-width:420px;
+
+    border-radius:20px;
+
+    box-shadow:0 20px 45px rgba(0,0,0,.12);
+
+    transition:.35s;
+}
+
+.principal-image:hover{
+    transform:scale(1.03);
+}
+
+.principal-text{
+    color:#555;
+    line-height:1.9;
+    font-size:1rem;
+}
+
+.principal-sign{
+    margin-top:30px;
+}
+
+.principal-sign h5{
+    font-weight:700;
+    color:#0d6efd;
+    margin-bottom:5px;
+}
+
+.principal-sign span{
+    color:#777;
+    font-size:.95rem;
+}
