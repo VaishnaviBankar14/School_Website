@@ -17,9 +17,15 @@ const { authorize } =
 router.post(
   "/apply",
   upload.fields([
-    { name: "photo", maxCount: 1 },
-    { name: "document", maxCount: 1 }
-  ]),
+  { name: "photo", maxCount: 1 },
+  { name: "birthCertificate", maxCount: 1 },
+  { name: "reportCard", maxCount: 1 },
+  { name: "transferCertificate", maxCount: 1 },
+  { name: "studentAadhar", maxCount: 1 },
+  { name: "parentAadhar", maxCount: 1 },
+  { name: "addressProof", maxCount: 1 },
+  { name: "otherDocument", maxCount: 1 }
+]),
   admissionController.applyAdmission
 );
 

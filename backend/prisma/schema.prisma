@@ -69,18 +69,29 @@ model TeacherApplication {
   createdAt DateTime @default(now())
 }
 
-
 model StudentAdmission {
-  id          Int             @id @default(autoincrement())
-  fullName    String
-  email       String
-  phone       String
-  className   String
+  id          Int      @id @default(autoincrement())
 
-  photoUrl    String?
-  documentUrl String?
+  fullName       String
+  parentName     String?
+  email          String
+  phone          String
+  className      String
+
+  dob            DateTime?
+  gender         String?
+  previousSchool String?
+  address        String?
+
+  photoUrl               String?
+  birthCertificateUrl    String?
+  reportCardUrl          String?
+  transferCertificateUrl String?
+  studentAadharUrl       String?
+  parentAadharUrl        String?
+  addressProofUrl        String?
+  otherDocumentUrl       String?
 
   status      AdmissionStatus @default(PENDING)
-
   createdAt   DateTime @default(now())
 }

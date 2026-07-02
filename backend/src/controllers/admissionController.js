@@ -5,17 +5,40 @@ const applyAdmission = async (req, res) => {
 
     const admission = await prisma.studentAdmission.create({
       data: {
-        fullName: req.body.fullName,
-        email: req.body.email,
-        phone: req.body.phone,
-        className: req.body.className,
+  fullName: req.body.fullName,
+  parentName: req.body.parentName,
+  email: req.body.email,
+  phone: req.body.phone,
+  className: req.body.className,
 
-        photoUrl:
-          req.files?.photo?.[0]?.path || null,
+  dob: req.body.dob ? new Date(req.body.dob) : null,
+  gender: req.body.gender,
+  previousSchool: req.body.previousSchool,
+  address: req.body.address,
 
-        documentUrl:
-          req.files?.document?.[0]?.path || null
-      }
+  photoUrl: req.files?.photo?.[0]?.path || null,
+
+  birthCertificateUrl:
+    req.files?.birthCertificate?.[0]?.path || null,
+
+  reportCardUrl:
+    req.files?.reportCard?.[0]?.path || null,
+
+  transferCertificateUrl:
+    req.files?.transferCertificate?.[0]?.path || null,
+
+  studentAadharUrl:
+    req.files?.studentAadhar?.[0]?.path || null,
+
+  parentAadharUrl:
+    req.files?.parentAadhar?.[0]?.path || null,
+
+  addressProofUrl:
+    req.files?.addressProof?.[0]?.path || null,
+
+  otherDocumentUrl:
+    req.files?.otherDocument?.[0]?.path || null,
+}
     });
 
     res.status(201).json({
