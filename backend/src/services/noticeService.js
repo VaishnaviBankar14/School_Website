@@ -22,8 +22,18 @@ const deleteNotice = async (id) => {
   });
 };
 
+const updateNotice = async (id, data) => {
+  return await prisma.notice.update({
+    where: {
+      id: Number(id),
+    },
+    data,
+  });
+};
+
 module.exports = {
   createNotice,
   getAllNotices,
   deleteNotice,
+  updateNotice,
 };

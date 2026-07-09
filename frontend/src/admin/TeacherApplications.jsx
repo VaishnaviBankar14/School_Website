@@ -1,23 +1,24 @@
+
 import { useEffect, useMemo, useState } from "react";
 import api from "../api/axios";
 import "./TeacherApplications.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import AdminLayout from "./layout/AdminLayout";
+import TeacherDetailsModal from "./TeacherDetailsModal";
 
 function TeacherApplications() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
 
   const fetchApplications = async () => {
     try {
       setLoading(true);
-
       const res = await api.get("/teachers/all");
-
       setApplications(res.data.data || []);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert("Failed to load teacher applications");
     } finally {
       setLoading(false);
@@ -28,193 +29,196 @@ function TeacherApplications() {
     fetchApplications();
   }, []);
 
-  const updateStatus = async (id, status) => {
-    try {
-      await api.put(`/teachers/${id}/status`, {
-        status,
-      });
+  const filteredApplications = useMemo(() => {
+    return applications.filter((app) => {
+      const q = search.toLowerCase();
+      const matchSearch =
+        app.fullName.toLowerCase().includes(q) ||
+        app.email.toLowerCase().includes(q);
 
-      fetchApplications();
-    } catch (error) {
-      console.error(error);
+      const matchStatus =
+        statusFilter === "ALL" || app.status === statusFilter;
+
+      return matchSearch && matchStatus;
+    });
+  }, [applications, search, statusFilter]);
+
+  const updateStatus = async (id, status) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to ${status.toLowerCase()} this application?`
+      )
+    )
+      return;
+
+    try {
+      await api.put(`/teachers/${id}/status`, { status });
+      await fetchApplications();
+      alert(`Application ${status.toLowerCase()} successfully.`);
+    } catch (err) {
+      console.error(err);
       alert("Failed to update application");
     }
   };
 
-  const filteredApplications = useMemo(() => {
-    return applications.filter((app) => {
-      const value = search.toLowerCase();
-
-      return (
-        app.fullName.toLowerCase().includes(value) ||
-        app.email.toLowerCase().includes(value)
-      );
-    });
-  }, [applications, search]);
-
-  const getBadge = (status) => {
-    switch (status) {
-      case "APPROVED":
-        return "bg-success";
-
-      case "REJECTED":
-        return "bg-danger";
-
-      default:
-        return "bg-warning text-dark";
-    }
+  const badgeClass = (status) => {
+    if (status === "APPROVED") return "bg-success";
+    if (status === "REJECTED") return "bg-danger";
+    return "bg-warning text-dark";
   };
 
   return (
-    <div className="container-fluid mt-4">
-
-      <div className="card shadow">
-
-        <div className="card-header bg-primary text-white">
-          <h4 className="mb-0">Teacher Applications</h4>
-        </div>
-
-        <div className="card-body">
-
-          <div className="mb-3">
-            <input
-              className="form-control"
-              placeholder="Search by Name or Email..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+    <AdminLayout>
+      <div className="container-fluid mt-3">
+        <div className="card shadow border-0">
+          <div className="card-header bg-primary text-white">
+            <h4 className="mb-0">Teacher Applications</h4>
           </div>
 
-          {loading ? (
-            <div className="text-center p-5">
-              <div className="spinner-border"></div>
+          <div className="card-body">
+            <div className="row mb-4">
+              <div className="col-md-8">
+                <input
+                  className="form-control"
+                  placeholder="Search by Name or Email..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="ALL">All Status</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </div>
             </div>
-          ) : filteredApplications.length === 0 ? (
-            <div className="text-center">
-              No Applications Found
-            </div>
-          ) : (
-            <div className="table-responsive">
 
-              <table className="table table-bordered table-hover align-middle">
-
-                <thead className="table-dark">
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Subject</th>
-                    <th>Qualification</th>
-                    <th>Experience</th>
-                    <th>Status</th>
-                    <th>Resume</th>
-                    <th>Certificate</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-
-                  {filteredApplications.map((app) => (
-
-                    <tr key={app.id}>
-
-                      <td>{app.fullName}</td>
-
-                      <td>{app.email}</td>
-
-                      <td>{app.phone}</td>
-
-                      <td>{app.subject}</td>
-
-                      <td>{app.qualification}</td>
-
-                      <td>{app.experience}</td>
-
-                      <td>
-                        <span className={`badge ${getBadge(app.status)}`}>
-                          {app.status}
-                        </span>
-                      </td>
-
-                      <td>
-                        {app.resumeUrl ? (
-                          <a
-                            href={`http://localhost:5000/${app.resumeUrl}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn btn-sm btn-info"
-                          >
-                            Resume
-                          </a>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-
-                      <td>
-                        {app.certificateUrl ? (
-                          <a
-                            href={`http://localhost:5000/${app.certificateUrl}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn btn-sm btn-secondary"
-                          >
-                            Certificate
-                          </a>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-
-                      <td>
-
-                        {app.status === "PENDING" ? (
-                          <div className="d-flex gap-2">
-
-                            <button
-                              className="btn btn-success btn-sm"
-                              onClick={() =>
-                                updateStatus(app.id, "APPROVED")
-                              }
-                            >
-                              Approve
-                            </button>
-
-                            <button
-                              className="btn btn-danger btn-sm"
-                              onClick={() =>
-                                updateStatus(app.id, "REJECTED")
-                              }
-                            >
-                              Reject
-                            </button>
-
-                          </div>
-                        ) : (
-                          <span className="text-muted">
-                            No Action
-                          </span>
-                        )}
-
-                      </td>
-
+            {loading ? (
+              <div className="text-center p-5">
+                <div className="spinner-border text-primary"></div>
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="table table-hover table-bordered align-middle">
+                  <thead className="table-dark">
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Subject</th>
+                      <th>Experience</th>
+                      <th>Status</th>
+                      <th>Documents</th>
+                      <th>Actions</th>
                     </tr>
+                  </thead>
 
-                  ))}
+                  <tbody>
+                    {filteredApplications.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="text-center">
+                          No Applications Found
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredApplications.map((app, index) => (
+                        <tr key={app.id}>
+                          <td>{index + 1}</td>
+                          <td>{app.fullName}</td>
+                          <td>{app.subject}</td>
+                          <td>{app.experience}</td>
 
-                </tbody>
+                          <td>
+                            <span className={`badge ${badgeClass(app.status)}`}>
+                              {app.status}
+                            </span>
+                          </td>
 
-              </table>
+                          <td>
+                            <div className="d-flex gap-2">
+                              {app.resumeUrl && (
+                                <a
+                                  href={`http://localhost:5000/${app.resumeUrl}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="btn btn-info btn-sm"
+                                >
+                                  <i className="bi bi-file-earmark-pdf"></i>
+                                </a>
+                              )}
 
-            </div>
-          )}
+                              {app.certificateUrls?.length > 0 && (
+  <button
+    className="btn btn-secondary btn-sm"
+    onClick={() => setSelectedTeacher(app)}
+  >
+    <i className="bi bi-award"></i>
+    {" "}Certificates ({app.certificateUrls.length})
+  </button>
+)}
+                            </div>
+                          </td>
 
+                          <td>
+                            <div className="d-flex gap-2 flex-wrap">
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => setSelectedTeacher(app)}
+                              >
+                                <i className="bi bi-eye"></i> View
+                              </button>
+
+                              {app.status === "PENDING" ? (
+                                <>
+                                  <button
+                                    className="btn btn-success btn-sm"
+                                    onClick={() =>
+                                      updateStatus(app.id, "APPROVED")
+                                    }
+                                  >
+                                    Approve
+                                  </button>
+
+                                  <button
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() =>
+                                      updateStatus(app.id, "REJECTED")
+                                    }
+                                  >
+                                    Reject
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-success fw-semibold">
+  Completed
+</span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
 
+        {selectedTeacher && (
+          <TeacherDetailsModal
+            teacher={selectedTeacher}
+            onClose={() => setSelectedTeacher(null)}
+          />
+        )}
       </div>
-
-    </div>
+    </AdminLayout>
   );
 }
 

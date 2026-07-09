@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../api/axios";
 import "./StudentAdmissions.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import AdminLayout from "./layout/AdminLayout";
+import StudentDetailsModal from "../components/student/StudentDetailsModal";
 
 function StudentAdmissions() {
   const [admissions, setAdmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   const fetchAdmissions = async () => {
     try {
@@ -64,139 +65,161 @@ function StudentAdmissions() {
   };
 
   return (
-    <div className="container-fluid mt-4">
-      <div className="card shadow">
+    <AdminLayout>
+      <div className="container-fluid mt-3">
 
-        <div className="card-header bg-primary text-white">
-          <h4 className="mb-0">Student Admissions</h4>
-        </div>
+        <div className="card shadow">
 
-        <div className="card-body">
-
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search by Name or Email..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          <div className="card-header bg-primary text-white">
+            <h4 className="mb-0">Student Admissions</h4>
           </div>
 
-          {loading ? (
-            <div className="text-center p-5">
-              <div className="spinner-border"></div>
+          <div className="card-body">
+
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by Name or Email..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-          ) : filteredAdmissions.length === 0 ? (
-            <h5 className="text-center">No Admissions Found</h5>
-          ) : (
-            <div className="table-responsive">
 
-              <table className="table table-bordered table-hover align-middle">
+            {loading ? (
+              <div className="text-center p-5">
+                <div className="spinner-border"></div>
+              </div>
+            ) : filteredAdmissions.length === 0 ? (
+              <h5 className="text-center">No Admissions Found</h5>
+            ) : (
+              <div className="table-responsive">
 
-                <thead className="table-dark">
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Class</th>
-                    <th>Status</th>
-                    <th>Photo</th>
-                    <th>Document</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
+                <table className="table table-bordered table-hover align-middle">
 
-                <tbody>
-
-                  {filteredAdmissions.map((item) => (
-
-                    <tr key={item.id}>
-
-                      <td>{item.fullName}</td>
-                      <td>{item.email}</td>
-                      <td>{item.phone}</td>
-                      <td>{item.className}</td>
-
-                      <td>
-                        <span className={`badge ${badgeColor(item.status)}`}>
-                          {item.status}
-                        </span>
-                      </td>
-
-                      <td>
-                        {item.photoUrl ? (
-                          <a
-                            href={`http://localhost:5000/${item.photoUrl}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn btn-info btn-sm"
-                          >
-                            Photo
-                          </a>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-
-                      <td>
-                        {item.documentUrl ? (
-                          <a
-                            href={`http://localhost:5000/${item.documentUrl}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn btn-secondary btn-sm"
-                          >
-                            Document
-                          </a>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-
-                      <td>
-                        {item.status === "PENDING" ? (
-                          <div className="d-flex gap-2">
-                            <button
-                              className="btn btn-success btn-sm"
-                              onClick={() =>
-                                updateStatus(item.id, "APPROVED")
-                              }
-                            >
-                              Approve
-                            </button>
-
-                            <button
-                              className="btn btn-danger btn-sm"
-                              onClick={() =>
-                                updateStatus(item.id, "REJECTED")
-                              }
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-muted">
-                            No Action
-                          </span>
-                        )}
-                      </td>
-
+                  <thead className="table-dark">
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Class</th>
+                      <th>Status</th>
+                      <th>Photo</th>
+                      <th>Document</th>
+                      <th>Action</th>
                     </tr>
+                  </thead>
 
-                  ))}
+                  <tbody>
 
-                </tbody>
+                    {filteredAdmissions.map((item) => (
 
-              </table>
+                      <tr key={item.id}>
 
-            </div>
-          )}
+                        <td>{item.fullName}</td>
+                        <td>{item.email}</td>
+                        <td>{item.phone}</td>
+                        <td>{item.className}</td>
+
+                        <td>
+                          <span className={`badge ${badgeColor(item.status)}`}>
+                            {item.status}
+                          </span>
+                        </td>
+
+                        <td>
+                          {item.photoUrl ? (
+                            <a
+                              href={`http://localhost:5000/${item.photoUrl}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn btn-info btn-sm"
+                            >
+                              Photo
+                            </a>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                        <td>
+  {(item.birthCertificateUrl ||
+    item.reportCardUrl ||
+    item.transferCertificateUrl ||
+    item.studentAadharUrl ||
+    item.parentAadharUrl ||
+    item.addressProofUrl ||
+    item.otherDocumentUrl) ? (
+    <span className="badge bg-success">
+      Documents Uploaded
+    </span>
+  ) : (
+    <span className="text-muted">
+      No Documents
+    </span>
+  )}
+</td>
+
+                       <td>
+  <div className="d-flex gap-2 flex-wrap">
+
+    <button
+      className="btn btn-primary btn-sm"
+      onClick={() => setSelectedStudent(item)}
+    >
+      <i className="bi bi-eye me-1"></i>
+      View
+    </button>
+
+    {item.status === "PENDING" ? (
+      <>
+        <button
+          className="btn btn-success btn-sm"
+          onClick={() => updateStatus(item.id, "APPROVED")}
+        >
+          Approve
+        </button>
+
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => updateStatus(item.id, "REJECTED")}
+        >
+          Reject
+        </button>
+      </>
+    ) : (
+      <span className="badge bg-secondary align-self-center">
+        Completed
+      </span>
+    )}
+
+  </div>
+</td>
+
+                      </tr>
+
+                    ))}
+
+                  </tbody>
+
+                </table>
+
+              </div>
+            )}
+
+          </div>
 
         </div>
 
       </div>
-    </div>
+
+      {selectedStudent && (
+  <StudentDetailsModal
+    student={selectedStudent}
+    onClose={() => setSelectedStudent(null)}
+  />
+)}
+    </AdminLayout>
   );
 }
 

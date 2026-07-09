@@ -13,6 +13,7 @@ const TeacherApplicationForm = () => {
   });
 
   const [resume, setResume] = useState(null);
+const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -27,6 +28,15 @@ const TeacherApplicationForm = () => {
     setResume(e.target.files[0]);
   };
 
+ const handleCertificates = (e) => {
+  const files = Array.from(e.target.files);
+
+  console.log("Selected files:", files);
+  console.log("Number of selected files:", files.length);
+
+  setCertificates(files);
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -40,10 +50,13 @@ const TeacherApplicationForm = () => {
         data.append(key, formData[key]);
       });
 
-      if (resume) {
-        data.append("resume", resume);
-      }
+     if (resume) {
+  data.append("resume", resume);
+}
 
+certificates.forEach((file) => {
+  data.append("certificates", file);
+});
       await axios.post(
         "http://localhost:5000/api/teachers/apply",
         data,
@@ -67,8 +80,10 @@ const TeacherApplicationForm = () => {
       });
 
       setResume(null);
+setCertificates([]);
 
-      document.getElementById("resume").value = "";
+document.getElementById("resume").value = "";
+document.getElementById("certificates").value = "";
     } catch (err) {
       console.error(err);
       setMessage("Failed to submit application.");
@@ -221,6 +236,33 @@ const TeacherApplicationForm = () => {
                         required
                       />
                     </div>
+
+                    <div className="col-12 mb-4">
+  <label className="form-label fw-semibold">
+    Certificates
+  </label>
+
+  <input
+    id="certificates"
+    type="file"
+    className="form-control"
+    accept=".pdf,.jpg,.jpeg,.png"
+    multiple
+    onChange={handleCertificates}
+  />
+
+  <small className="text-muted">
+    You can upload multiple certificates.
+  </small>
+
+  {certificates.length > 0 && (
+    <ul className="mt-2 mb-0">
+      {certificates.map((file, index) => (
+        <li key={index}>{file.name}</li>
+      ))}
+    </ul>
+  )}
+</div>
 
                     <div className="col-12 mb-4">
                       <label className="form-label fw-semibold">

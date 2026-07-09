@@ -25,4 +25,11 @@ router.delete(
   noticeController.removeNotice
 );
 
+router.put(
+  "/:id",
+  authenticate,
+  authorize("ADMIN"),
+  noticeController.editNotice
+);
+
 module.exports = router;

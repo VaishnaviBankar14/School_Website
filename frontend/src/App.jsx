@@ -62,10 +62,10 @@ function App() {
           element={<StudentAdmissions />}
         />
 
-        <Route
-          path="/admin/contacts"
-          element={<ContactMessages />}
-        />
+       <Route
+  path="/admin/messages"
+  element={<ContactMessages />}
+/>
 
         <Route
           path="/admin/notices"

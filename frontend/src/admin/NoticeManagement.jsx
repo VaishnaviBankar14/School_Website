@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../api/axios";
 import "./NoticeManagement.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import AdminLayout from "./layout/AdminLayout";
 
 function NoticeManagement() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [editId, setEditId] = useState(null);
   const [notices, setNotices] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -31,25 +31,36 @@ function NoticeManagement() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
+  try {
+    if (editId) {
+      await api.put(`/notices/${editId}`, {
+        title,
+        description,
+      });
+
+      alert("Notice updated successfully");
+    } else {
       await api.post("/notices", {
         title,
         description,
       });
 
       alert("Notice added successfully");
-
-      setTitle("");
-      setDescription("");
-
-      fetchNotices();
-    } catch (error) {
-      console.error(error);
-      alert("Failed to add notice");
     }
-  };
+
+    setTitle("");
+    setDescription("");
+    setEditId(null);
+
+    fetchNotices();
+
+  } catch (error) {
+    console.error(error);
+    alert("Operation failed");
+  }
+};
 
   const deleteNotice = async (id) => {
     if (!window.confirm("Delete this notice?")) return;
@@ -64,6 +75,12 @@ function NoticeManagement() {
     }
   };
 
+  const handleEdit = (notice) => {
+  setEditId(notice.id);
+  setTitle(notice.title);
+  setDescription(notice.description);
+};
+
   const filteredNotices = useMemo(() => {
     return notices.filter((notice) =>
       notice.title.toLowerCase().includes(search.toLowerCase())
@@ -71,119 +88,148 @@ function NoticeManagement() {
   }, [notices, search]);
 
   return (
-    <div className="container mt-4">
+    <AdminLayout>
+      <div className="container-fluid mt-3">
 
-      <div className="card shadow">
+        <div className="card shadow">
 
-        <div className="card-header bg-primary text-white">
-          <h3 className="mb-0">Notice Management</h3>
-        </div>
+          <div className="card-header bg-primary text-white">
+            <h3 className="mb-0">Notice Management</h3>
+          </div>
 
-        <div className="card-body">
+          <div className="card-body">
 
-          <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
 
-            <div className="mb-3">
-              <label>Notice Title</label>
+              <div className="mb-3">
+                <label>Notice Title</label>
 
-              <input
-                className="form-control"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </div>
+                <input
+                  className="form-control"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
 
-            <div className="mb-3">
-              <label>Description</label>
+              <div className="mb-3">
+                <label>Description</label>
 
-              <textarea
-                className="form-control"
-                rows="4"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
+                <textarea
+                  className="form-control"
+                  rows="4"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                />
+              </div>
 
-            <button className="btn btn-success">
-              Add Notice
-            </button>
+           <div className="d-flex gap-2">
 
-          </form>
+  <button
+    type="submit"
+    className={`btn ${editId ? "btn-warning" : "btn-success"}`}
+  >
+    {editId ? "Update Notice" : "Add Notice"}
+  </button>
 
-          <hr />
+  {editId && (
+    <button
+      type="button"
+      className="btn btn-secondary"
+      onClick={() => {
+        setEditId(null);
+        setTitle("");
+        setDescription("");
+      }}
+    >
+      Cancel
+    </button>
+  )}
 
-          <input
-            className="form-control mb-3"
-            placeholder="Search Notice..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+</div>
 
-          {loading ? (
-            <div className="text-center p-4">
-              <div className="spinner-border"></div>
-            </div>
-          ) : filteredNotices.length === 0 ? (
-            <h5 className="text-center">
-              No Notices Found
-            </h5>
-          ) : (
-            <table className="table table-bordered table-hover">
+            </form>
 
-              <thead className="table-dark">
-                <tr>
-                  <th>Title</th>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
+            <hr />
 
-              <tbody>
+            <input
+              className="form-control mb-3"
+              placeholder="Search Notice..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
 
-                {filteredNotices.map((notice) => (
+            {loading ? (
+              <div className="text-center p-4">
+                <div className="spinner-border"></div>
+              </div>
+            ) : filteredNotices.length === 0 ? (
+              <h5 className="text-center">
+                No Notices Found
+              </h5>
+            ) : (
+              <table className="table table-bordered table-hover">
 
-                  <tr key={notice.id}>
-
-                    <td>{notice.title}</td>
-
-                    <td>{notice.description}</td>
-
-                    <td>
-                      {new Date(
-                        notice.createdAt
-                      ).toLocaleDateString()}
-                    </td>
-
-                    <td>
-
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() =>
-                          deleteNotice(notice.id)
-                        }
-                      >
-                        Delete
-                      </button>
-
-                    </td>
-
+                <thead className="table-dark">
+                  <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Action</th>
                   </tr>
+                </thead>
 
-                ))}
+                <tbody>
 
-              </tbody>
+                  {filteredNotices.map((notice) => (
 
-            </table>
-          )}
+                    <tr key={notice.id}>
+
+                      <td>{notice.title}</td>
+
+                      <td>{notice.description}</td>
+
+                      <td>
+                        {new Date(notice.createdAt).toLocaleDateString()}
+                      </td>
+<td>
+
+  <div className="d-flex gap-2">
+
+    <button
+      className="btn btn-warning btn-sm"
+      onClick={() => handleEdit(notice)}
+    >
+      Edit
+    </button>
+
+    <button
+      className="btn btn-danger btn-sm"
+      onClick={() => deleteNotice(notice.id)}
+    >
+      Delete
+    </button>
+
+  </div>
+
+</td>
+
+                    </tr>
+
+                  ))}
+
+                </tbody>
+
+              </table>
+            )}
+
+          </div>
 
         </div>
 
       </div>
-
-    </div>
+    </AdminLayout>
   );
 }
 

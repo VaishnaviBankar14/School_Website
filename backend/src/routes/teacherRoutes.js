@@ -15,7 +15,7 @@ router.post(
   "/apply",
   upload.fields([
     { name: "resume", maxCount: 1 },
-    { name: "certificate", maxCount: 1 }
+    { name: "certificates", maxCount: 10 }
   ]),
   teacherController.applyTeacher
 );
@@ -35,20 +35,3 @@ router.put(
 );
 
 module.exports = router;
-// const express = require("express");
-
-// const router = express.Router();
-
-// const teacherController = require("../controllers/teacherController");
-// const upload = require("../middleware/uploadMiddleware");
-
-// router.post(
-//   "/apply",
-//   upload.fields([
-//     { name: "resume", maxCount: 1 },
-//     { name: "certificate", maxCount: 1 }
-//   ]),
-//   teacherController.applyTeacher
-// );
-
-// module.exports = router;

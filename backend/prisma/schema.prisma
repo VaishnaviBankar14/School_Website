@@ -62,7 +62,8 @@ model TeacherApplication {
   experience    String
 
   resumeUrl      String?
-  certificateUrl String?
+  certificateUrls  String[]
+
 
   status String @default("PENDING")
 

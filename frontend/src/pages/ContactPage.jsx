@@ -1,8 +1,10 @@
 import { useState } from "react";
 import api from "../api/axios";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import PublicLayout from "../layouts/PublicLayout";
+import ContactHero from "../components/contact/ContactHero";
+import ContactSection from "../components/contact/ContactSection";
+import ContactMap from "../components/contact/ContactMap";
+import ContactFAQ from "../components/contact/ContactFAQ";
 
 function ContactPage() {
   const [form, setForm] = useState({
@@ -45,8 +47,16 @@ function ContactPage() {
     }
   };
 
-  return (
-    <div className="container mt-5">
+ return (
+  <PublicLayout>
+
+    <ContactHero />
+    <ContactSection />
+
+    <ContactMap />
+     <ContactFAQ />
+
+    <div className="container py-5">
 
       <div className="row justify-content-center">
 
@@ -132,7 +142,8 @@ function ContactPage() {
       </div>
 
     </div>
-  );
+  </PublicLayout>
+);
 }
 
 export default ContactPage;

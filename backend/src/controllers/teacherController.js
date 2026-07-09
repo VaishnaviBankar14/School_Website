@@ -3,6 +3,9 @@ const prisma = require("../config/prisma");
 const applyTeacher = async (req, res) => {
   try {
 
+     console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+
     const teacher = await prisma.teacherApplication.create({
       data: {
         fullName: req.body.fullName,
@@ -15,8 +18,8 @@ const applyTeacher = async (req, res) => {
         resumeUrl:
           req.files?.resume?.[0]?.path || null,
 
-        certificateUrl:
-          req.files?.certificate?.[0]?.path || null
+        certificateUrls:
+  req.files?.certificates?.map((file) => file.path) || []
       }
     });
 
